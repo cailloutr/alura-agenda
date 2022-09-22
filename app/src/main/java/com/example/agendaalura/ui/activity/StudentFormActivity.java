@@ -1,5 +1,6 @@
 package com.example.agendaalura.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.agendaalura.R;
 import com.example.agendaalura.dao.AlunoDao;
 import com.example.agendaalura.model.Aluno;
+
+import java.io.Serializable;
 
 public class StudentFormActivity extends AppCompatActivity {
 
@@ -28,6 +31,13 @@ public class StudentFormActivity extends AppCompatActivity {
         inicializarComponentes();
 
         configurarSaveButtonClickListenner();
+
+        Intent intent = getIntent();
+        Aluno aluno = (Aluno) intent.getSerializableExtra("aluno");
+
+        edtName.setText(aluno.getName());
+        edtPhone.setText(aluno.getPhone());
+        edtEmail.setText(aluno.getEmail());
     }
 
     private void configurarSaveButtonClickListenner() {
