@@ -18,12 +18,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class StudentsListActivity extends AppCompatActivity {
+public class StudentsListActivity extends AppCompatActivity implements ConstantesActivities {
 
     public static final String TAG = "StudentsListActivity";
     public final String NOVO_ALUNO = "Novo aluno";
     private FloatingActionButton fabAddNewStudent;
     private final AlunoDao alunoDao = new AlunoDao();
+    private ArrayAdapter<Aluno> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class StudentsListActivity extends AppCompatActivity {
         setTitle(NOVO_ALUNO);
 
         inicializarComponentes();
+        inicializaListaDeAlunos();
 
         configurarNovoAlunoFabClickListenner();
         alunoDao.salvar(new Aluno("Caio", "2233445566", "caio.trocilo@gmail.com"));
@@ -43,17 +45,26 @@ public class StudentsListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        inicializaListaDeAlunos();
+        atualizaLista();
+    }
+
+    private void atualizaLista() {
+        adapter.clear();
+        adapter.addAll(alunoDao.todos());
     }
 
     private void configurarNovoAlunoFabClickListenner() {
         fabAddNewStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(
+                iniciaAtividadeDeFormulario(new Intent(
                         StudentsListActivity.this, StudentFormActivity.class));
             }
         });
+    }
+
+    private void iniciaAtividadeDeFormulario(Intent intent) {
+        startActivity(intent);
     }
 
     private void inicializarComponentes() {
@@ -61,25 +72,43 @@ public class StudentsListActivity extends AppCompatActivity {
     }
 
     private void inicializaListaDeAlunos() {
-
         ListView studentList = findViewById(R.id.activity_students_listview);
         List<Aluno> alunos = alunoDao.todos();
-        studentList.setAdapter(new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                alunos));
+        configuraAdapter(studentList);
 
+        configuraOnItemClickListenerParaCadaItem(studentList);
+        configuraOnItemLongClickListenerParaCadaItem(studentList);
+    }
+
+    private void configuraOnItemLongClickListenerParaCadaItem(ListView studentList) {
+        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Aluno alunoSelecionado = (Aluno) adapterView.getItemAtPosition(i);
+                alunoDao.remove(alunoSelecionado);
+                adapter.remove(alunoSelecionado);
+                return true;
+            }
+        });
+    }
+
+    private void configuraOnItemClickListenerParaCadaItem(ListView studentList) {
         studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.i(TAG, "Posição: " + alunos.get(i));
-
-                Aluno aluno = alunos.get(i);
+                Aluno aluno = (Aluno) adapterView.getItemAtPosition(i);
                 Intent intent = new Intent(StudentsListActivity.this, StudentFormActivity.class);
-                intent.putExtra("aluno", aluno);
-                startActivity(intent);
-
+                intent.putExtra(CHAVE_ALUNO, aluno);
+                iniciaAtividadeDeFormulario(intent);
             }
         });
+    }
+
+
+    private void configuraAdapter(ListView studentList) {
+        adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1);
+        studentList.setAdapter(adapter);
     }
 }
