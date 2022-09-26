@@ -2,9 +2,11 @@ package com.example.agendaalura.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.agendaalura.R;
@@ -18,7 +20,6 @@ public class StudentFormActivity extends AppCompatActivity implements Constantes
     private EditText edtEmail;
 
     AlunoDao alunoDao = new AlunoDao();
-    private Button saveButton;
     private Aluno aluno;
 
     @Override
@@ -28,10 +29,22 @@ public class StudentFormActivity extends AppCompatActivity implements Constantes
 
         inicializarComponentes();
 
-        configurarSaveButtonClickListenner();
-
         Intent intent = getIntent();
         carregaAluno(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_students_form_menu_salvar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.activity_students_form_salvar) {
+            salvarAluno();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void carregaAluno(Intent intent) {
@@ -51,20 +64,17 @@ public class StudentFormActivity extends AppCompatActivity implements Constantes
         edtEmail.setText(aluno.getEmail());
     }
 
-    private void configurarSaveButtonClickListenner() {
-        saveButton.setOnClickListener(view -> {
-            preencheAluno(aluno);
-            if (aluno.isIdValid()) {
-                alunoDao.edita(aluno);
-            } else {
-                alunoDao.salvar(aluno);
-            }
-            finish();
-        });
+    private void salvarAluno() {
+        preencheAluno(aluno);
+        if (aluno.isIdValid()) {
+            alunoDao.edita(aluno);
+        } else {
+            alunoDao.salvar(aluno);
+        }
+        finish();
     }
 
     private void inicializarComponentes() {
-        saveButton = findViewById(R.id.activity_students_form_save_button);
         edtName = findViewById(R.id.activity_students_form_name);
         edtPhone = findViewById(R.id.activity_students_form_phone);
         edtEmail = findViewById(R.id.activity_students_form_email);

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/activity_students_form_salvar"
+        android:icon="@drawable/ic_action_save_sudent"
+        android:title="@string/salvar_aluno_menu_option"
+        app:showAsAction="always" />
+</menu>

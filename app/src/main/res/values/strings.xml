@@ -5,4 +5,6 @@
     <string name="email">Email</string>
     <string name="save">Save</string>
     <string name="novo_aluno_title">Lista de Alunos</string>
+    <string name="menu_item_remover">Remover</string>
+    <string name="salvar_aluno_menu_option">Salvar aluno</string>
 </resources>

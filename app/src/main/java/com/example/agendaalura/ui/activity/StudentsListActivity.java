@@ -3,11 +3,14 @@ package com.example.agendaalura.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,6 +28,30 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     private FloatingActionButton fabAddNewStudent;
     private final AlunoDao alunoDao = new AlunoDao();
     private ArrayAdapter<Aluno> adapter;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.activity_lista_alunos_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.activity_lista_alunos_menu_remover) {
+            AdapterView.AdapterContextMenuInfo menuInfo =
+                    (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+            Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
+            remover(alunoEscolhido);
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void remover(Aluno alunoEscolhido) {
+        alunoDao.remove(alunoEscolhido);
+        atualizaLista();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,20 +104,20 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
         configuraAdapter(studentList);
 
         configuraOnItemClickListenerParaCadaItem(studentList);
-        configuraOnItemLongClickListenerParaCadaItem(studentList);
+        registerForContextMenu(studentList);
     }
 
-    private void configuraOnItemLongClickListenerParaCadaItem(ListView studentList) {
-        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Aluno alunoSelecionado = (Aluno) adapterView.getItemAtPosition(i);
-                alunoDao.remove(alunoSelecionado);
-                adapter.remove(alunoSelecionado);
-                return true;
-            }
-        });
-    }
+//    private void configuraOnItemLongClickListenerParaCadaItem(ListView studentList) {
+//        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Aluno alunoSelecionado = (Aluno) adapterView.getItemAtPosition(i);
+//                alunoDao.remove(alunoSelecionado);
+//                adapter.remove(alunoSelecionado);
+//                return true;
+//            }
+//        });
+//    }
 
     private void configuraOnItemClickListenerParaCadaItem(ListView studentList) {
         studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
