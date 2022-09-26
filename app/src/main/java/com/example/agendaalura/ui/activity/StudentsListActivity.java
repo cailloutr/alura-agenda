@@ -2,12 +2,10 @@ package com.example.agendaalura.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.agendaalura.R;
 import com.example.agendaalura.dao.AlunoDao;
 import com.example.agendaalura.model.Aluno;
+import com.example.agendaalura.ui.adapter.ListaAlunosAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -27,7 +26,8 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     public final String NOVO_ALUNO = "Novo aluno";
     private FloatingActionButton fabAddNewStudent;
     private final AlunoDao alunoDao = new AlunoDao();
-    private ArrayAdapter<Aluno> adapter;
+    private ListaAlunosAdapter adapter;
+    //private ArrayAdapter<Aluno> adapter;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -50,6 +50,7 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
 
     private void remover(Aluno alunoEscolhido) {
         alunoDao.remove(alunoEscolhido);
+        //adapter.remove(alunoEscolhido);
         atualizaLista();
     }
 
@@ -65,13 +66,13 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
         configurarNovoAlunoFabClickListenner();
         alunoDao.salvar(new Aluno("Caio", "2233445566", "caio.trocilo@gmail.com"));
         alunoDao.salvar(new Aluno("Daniel", "2233445566", "daniel.trocilo@gmail.com"));
+        alunoDao.salvar(new Aluno("Daniel", "2233445566", "daniel.trocilo@gmail.com"));
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         atualizaLista();
     }
 
@@ -107,17 +108,6 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
         registerForContextMenu(studentList);
     }
 
-//    private void configuraOnItemLongClickListenerParaCadaItem(ListView studentList) {
-//        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Aluno alunoSelecionado = (Aluno) adapterView.getItemAtPosition(i);
-//                alunoDao.remove(alunoSelecionado);
-//                adapter.remove(alunoSelecionado);
-//                return true;
-//            }
-//        });
-//    }
 
     private void configuraOnItemClickListenerParaCadaItem(ListView studentList) {
         studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,9 +123,7 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
 
 
     private void configuraAdapter(ListView studentList) {
-        adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1);
+        adapter = new ListaAlunosAdapter(this);
         studentList.setAdapter(adapter);
     }
 }
