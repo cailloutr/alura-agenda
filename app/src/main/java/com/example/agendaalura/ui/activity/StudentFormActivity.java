@@ -19,7 +19,7 @@ public class StudentFormActivity extends AppCompatActivity implements Constantes
     private EditText edtPhone;
     private EditText edtEmail;
 
-    AlunoDao alunoDao = new AlunoDao();
+    final AlunoDao alunoDao = new AlunoDao();
     private Aluno aluno;
 
     @Override

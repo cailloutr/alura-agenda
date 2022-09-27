@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+<menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
@@ -7,6 +7,6 @@
         android:id="@+id/activity_lista_alunos_menu_remover"
         android:title="@string/menu_item_remover" />
     <item
-        android:id="@+id/activity_lista_alunos_menu_teste"
-        android:title="Teste" />
+        android:title="Teste"
+        tools:ignore="HardcodedText" />
 </menu>

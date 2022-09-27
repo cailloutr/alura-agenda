@@ -14,6 +14,7 @@ import com.example.agendaalura.model.Aluno;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("CommentedOutCode")
 public class ListaAlunosAdapter extends BaseAdapter {
 
     private final List<Aluno> alunos = new ArrayList<>();
@@ -54,15 +55,14 @@ public class ListaAlunosAdapter extends BaseAdapter {
     }
 
 
-    public void clear() {
-        alunos.clear();
+    public void atualiza(List<Aluno> alunos) {
+        this.alunos.clear();
+        this.alunos.addAll(alunos);
+        notifyDataSetChanged();
     }
 
-    public void addAll(List<Aluno> todos) {
-        this.alunos.addAll(todos);
-    }
-
-    public void remove(Aluno aluno) {
-        alunos.remove(aluno);
-    }
+//    public void remove(Aluno aluno) {
+//        alunos.remove(aluno);
+//        notifyDataSetChanged();
+//    }
 }

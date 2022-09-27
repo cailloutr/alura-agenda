@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.agendaalura.R;
@@ -18,16 +19,13 @@ import com.example.agendaalura.model.Aluno;
 import com.example.agendaalura.ui.adapter.ListaAlunosAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
 public class StudentsListActivity extends AppCompatActivity implements ConstantesActivities {
 
-    public static final String TAG = "StudentsListActivity";
+    //public static final String TAG = "StudentsListActivity";
     public final String NOVO_ALUNO = "Novo aluno";
     private FloatingActionButton fabAddNewStudent;
     private final AlunoDao alunoDao = new AlunoDao();
     private ListaAlunosAdapter adapter;
-    //private ArrayAdapter<Aluno> adapter;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -39,13 +37,24 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     public boolean onContextItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.activity_lista_alunos_menu_remover) {
-            AdapterView.AdapterContextMenuInfo menuInfo =
-                    (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-            Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
-            remover(alunoEscolhido);
+            confirmaRemocao(item);
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void confirmaRemocao(@NonNull MenuItem item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Removendo aluno")
+                .setMessage("Tem certeza que deseja continuar?")
+                .setPositiveButton("Sim", (dialogInterface, i) -> {
+                    AdapterView.AdapterContextMenuInfo menuInfo =
+                            (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+                    Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
+                    remover(alunoEscolhido);
+                })
+                .setNegativeButton("Não", null)
+                .show();
     }
 
     private void remover(Aluno alunoEscolhido) {
@@ -64,9 +73,6 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
         inicializaListaDeAlunos();
 
         configurarNovoAlunoFabClickListenner();
-        alunoDao.salvar(new Aluno("Caio", "2233445566", "caio.trocilo@gmail.com"));
-        alunoDao.salvar(new Aluno("Daniel", "2233445566", "daniel.trocilo@gmail.com"));
-        alunoDao.salvar(new Aluno("Daniel", "2233445566", "daniel.trocilo@gmail.com"));
 
     }
 
@@ -77,18 +83,12 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     }
 
     private void atualizaLista() {
-        adapter.clear();
-        adapter.addAll(alunoDao.todos());
+        adapter.atualiza(alunoDao.todos());
     }
 
     private void configurarNovoAlunoFabClickListenner() {
-        fabAddNewStudent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                iniciaAtividadeDeFormulario(new Intent(
-                        StudentsListActivity.this, StudentFormActivity.class));
-            }
-        });
+        fabAddNewStudent.setOnClickListener(view -> iniciaAtividadeDeFormulario(new Intent(
+                StudentsListActivity.this, StudentFormActivity.class)));
     }
 
     private void iniciaAtividadeDeFormulario(Intent intent) {
@@ -101,7 +101,6 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
 
     private void inicializaListaDeAlunos() {
         ListView studentList = findViewById(R.id.activity_students_listview);
-        List<Aluno> alunos = alunoDao.todos();
         configuraAdapter(studentList);
 
         configuraOnItemClickListenerParaCadaItem(studentList);
@@ -110,14 +109,11 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
 
 
     private void configuraOnItemClickListenerParaCadaItem(ListView studentList) {
-        studentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Aluno aluno = (Aluno) adapterView.getItemAtPosition(i);
-                Intent intent = new Intent(StudentsListActivity.this, StudentFormActivity.class);
-                intent.putExtra(CHAVE_ALUNO, aluno);
-                iniciaAtividadeDeFormulario(intent);
-            }
+        studentList.setOnItemClickListener((adapterView, view, i, l) -> {
+            Aluno aluno = (Aluno) adapterView.getItemAtPosition(i);
+            Intent intent = new Intent(StudentsListActivity.this, StudentFormActivity.class);
+            intent.putExtra(CHAVE_ALUNO, aluno);
+            iniciaAtividadeDeFormulario(intent);
         });
     }
 

@@ -1,16 +1,12 @@
 package com.example.agendaalura.dao;
 
-import static com.example.agendaalura.ui.activity.StudentsListActivity.TAG;
-
-import android.util.Log;
-
 import com.example.agendaalura.model.Aluno;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlunoDao {
-    private final String TAG = "AlunoDao";
+    //private final String TAG = "AlunoDao";
 
     private final static List<Aluno> alunos = new ArrayList<>();
     private static int contadorDeIds = 1;
