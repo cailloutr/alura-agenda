@@ -16,16 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.agendaalura.R;
 import com.example.agendaalura.dao.AlunoDao;
 import com.example.agendaalura.model.Aluno;
+import com.example.agendaalura.ui.StudentsListView;
 import com.example.agendaalura.ui.adapter.ListaAlunosAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class StudentsListActivity extends AppCompatActivity implements ConstantesActivities {
 
-    //public static final String TAG = "StudentsListActivity";
     public final String NOVO_ALUNO = "Novo aluno";
     private FloatingActionButton fabAddNewStudent;
-    private final AlunoDao alunoDao = new AlunoDao();
-    private ListaAlunosAdapter adapter;
+    private final StudentsListView studentsListView = new StudentsListView(this);
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -37,30 +36,9 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     public boolean onContextItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.activity_lista_alunos_menu_remover) {
-            confirmaRemocao(item);
+            studentsListView.confirmaRemocao(item);
         }
         return super.onContextItemSelected(item);
-    }
-
-    private void confirmaRemocao(@NonNull MenuItem item) {
-        new AlertDialog.Builder(this)
-                .setTitle("Removendo aluno")
-                .setMessage("Tem certeza que deseja continuar?")
-                .setPositiveButton("Sim", (dialogInterface, i) -> {
-                    AdapterView.AdapterContextMenuInfo menuInfo =
-                            (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-                    Aluno alunoEscolhido = adapter.getItem(menuInfo.position);
-                    remover(alunoEscolhido);
-                })
-                .setNegativeButton("Não", null)
-                .show();
-    }
-
-    private void remover(Aluno alunoEscolhido) {
-        alunoDao.remove(alunoEscolhido);
-        //adapter.remove(alunoEscolhido);
-        atualizaLista();
     }
 
     @Override
@@ -79,11 +57,7 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
     @Override
     protected void onResume() {
         super.onResume();
-        atualizaLista();
-    }
-
-    private void atualizaLista() {
-        adapter.atualiza(alunoDao.todos());
+        studentsListView.atualizaLista();
     }
 
     private void configurarNovoAlunoFabClickListenner() {
@@ -101,7 +75,7 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
 
     private void inicializaListaDeAlunos() {
         ListView studentList = findViewById(R.id.activity_students_listview);
-        configuraAdapter(studentList);
+        studentsListView.configuraAdapter(studentList);
 
         configuraOnItemClickListenerParaCadaItem(studentList);
         registerForContextMenu(studentList);
@@ -115,11 +89,5 @@ public class StudentsListActivity extends AppCompatActivity implements Constante
             intent.putExtra(CHAVE_ALUNO, aluno);
             iniciaAtividadeDeFormulario(intent);
         });
-    }
-
-
-    private void configuraAdapter(ListView studentList) {
-        adapter = new ListaAlunosAdapter(this);
-        studentList.setAdapter(adapter);
     }
 }
